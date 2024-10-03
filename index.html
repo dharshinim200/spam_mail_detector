@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css">
+    <title>Email Classification</title>
+  </head>
+  <body>
+      <div class="container">
+       <h1>Email Classification</h1>
+       <div class="textareas">
+        <textarea id="inputMail" placeholder="Enter an email"></textarea>
+       </div>
+       <button onclick="classifyEmail()">Classify Email</button>
+       <p id="result"></p>
+      </div>
+
+    <script>
+      function classifyEmail() {
+        var inputMail = document.getElementById("inputMail").value;
+        if(inputMail=="")
+        {
+          alert("Mail Field is empty");
+          return ;
+        }
+        
+        // var apiUrl = "http://127.0.0.1:5000/classify";
+        var apiUrl = "https://spam-mail-detector-p4nw.onrender.com/classify"
+
+        fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ input_mail: inputMail }),
+        })
+          .then((response) => 
+          {
+            if (!response.ok) {
+            throw new Error('Server is not active');
+          }
+          return response.json();
+          }
+          )
+          .then((data) => {
+            var resultElement = document.getElementById("result");
+            resultElement.innerHTML =
+              data.prediction === 1 ? "Ham mail" : "Spam mail";
+          })
+          .catch((error) => {
+            var resultElement = document.getElementById("result");
+          resultElement.innerHTML = "Error: " + error.message;
+          console.error("Error:", error);
+          });
+      }
+    </script>
+  </body>
+</html>
